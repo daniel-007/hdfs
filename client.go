@@ -58,7 +58,8 @@ type ClientOptions struct {
 //   // with a credentialed Kerberos client.
 //   KerberosClient *krb.Client
 //
-//   // Determined by dfs.namenode.kerberos.principal.
+//   // Determined by dfs.namenode.kerberos.principal, with the realm (anything
+//   // including and after a '@') chopped off.
 //   KerberosServicePrincipleName string
 //
 // Because of the way Kerberos can be forced by the hadoop config but not
@@ -85,7 +86,7 @@ func ClientOptionsFromConf(conf HadoopConf) (ClientOptions, error) {
 	}
 
 	if conf["dfs.namenode.kerberos.principal"] != "" {
-		options.KerberosServicePrincipleName = conf["dfs.namenode.kerberos.principal"]
+		options.KerberosServicePrincipleName = strings.Split(conf["dfs.namenode.kerberos.principal"], "@")[0]
 	}
 
 	return options, nil
